@@ -916,10 +916,8 @@ func handler(rawEvt interface{}) {
 			} else {
 				log.Infof("Decrypted reaction: %+v", decrypted)
 			}
-		}
-
-		img := evt.Message.GetImageMessage()
-		if img != nil {
+		} else if evt.Message.GetImageMessage() != nil {
+			img := evt.Message.GetImageMessage()
 			data, err := cli.Download(img)
 			if err != nil {
 				log.Errorf("Failed to download image: %v", err)
@@ -933,7 +931,58 @@ func handler(rawEvt interface{}) {
 				return
 			}
 			log.Infof("Saved image in message to %s", path)
+		} else if evt.Message.GetAudioMessage() != nil {
+			audio := evt.Message.GetAudioMessage()
+			data, err := cli.Download(audio)
+			if err != nil {
+				log.Errorf("Failed to save audio: %v", err)
+				return
+			}
+			exts, _ := mime.ExtensionsByType(audio.GetMimetype())
+			path := fmt.Sprintf("%s%s", evt.Info.ID, exts[0])
+			err = os.WriteFile(path, data, 0600)
+			if err != nil {
+				log.Errorf("Failed to save audio: %v", err)
+				return
+			}
+			log.Infof("Saved audio in message to %s", path)
+		} else if evt.Message.GetVideoMessage() != nil {
+			vedio := evt.Message.GetVideoMessage()
+			data, err := cli.Download(vedio)
+			if err != nil {
+				log.Errorf("Failed to save audio: %v", err)
+				return
+			}
+			exts, _ := mime.ExtensionsByType(vedio.GetMimetype())
+			path := fmt.Sprintf("%s%s", evt.Info.ID, exts[0])
+			err = os.WriteFile(path, data, 0600)
+			if err != nil {
+				log.Errorf("Failed to save vedio: %v", err)
+				return
+			}
+			log.Infof("Saved vedio in message to %s", path)
+		} else if evt.Message.GetDocumentMessage() != nil {
+			document := evt.Message.GetDocumentMessage()
+			if _, err := os.Stat(*document.FileName); err != nil {
+				data, err := cli.Download(document)
+				if err != nil {
+					log.Errorf("Failed to save audio: %v", err)
+					return
+				}
+				exts, _ := mime.ExtensionsByType(document.GetMimetype())
+				path := fmt.Sprintf("%s%s", *document.FileName, exts[0])
+				err = os.WriteFile(path, data, 0600)
+				if err != nil {
+					log.Errorf("Failed to save document: %v", err)
+					return
+				}
+				log.Infof("Saved document in message to %s", path)
+			} else {
+				log.Infof("file already exists")
+			}
+
 		}
+
 	case *events.Receipt:
 		if evt.Type == events.ReceiptTypeRead || evt.Type == events.ReceiptTypeReadSelf {
 			log.Infof("%v was read by %s at %s", evt.MessageIDs, evt.SourceString(), evt.Timestamp)
