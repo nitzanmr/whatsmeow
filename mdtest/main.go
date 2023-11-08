@@ -897,7 +897,7 @@ func handler(rawEvt interface{}) {
 			metaParts = append(metaParts, "edit")
 		}
 		event_source := strings.Split(evt.Info.SourceString(), " ")
-		if event_source[2] != "" {
+		if len(event_source) >= 2 {
 			group_info, _ := cli.GetGroupInfo(evt.Info.Chat)
 			group_name := group_info.GroupName
 			event_source[2] = group_name.Name + ".us"
