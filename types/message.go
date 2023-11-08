@@ -17,7 +17,7 @@ type MessageSource struct {
 	Sender   JID  // The user who sent the message.
 	IsFromMe bool // Whether the message was sent by the current user instead of someone else.
 	IsGroup  bool // Whether the chat is a group chat or broadcast list.
-
+	ChatName GroupName
 	// When sending a read receipt to a broadcast list message, the Chat is the broadcast list
 	// and Sender is you, so this field contains the recipient of the read receipt.
 	BroadcastListOwner JID

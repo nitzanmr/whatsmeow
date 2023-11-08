@@ -485,7 +485,7 @@ func handleCmd(cmd string, args []string) {
 		if err != nil {
 			log.Errorf("Failed to get group info: %v", err)
 		} else {
-			log.Infof("Group info: %+v", resp)
+			log.Infof("Group info: %+v", resp.GroupName)
 		}
 	case "subgroups":
 		if len(args) < 1 {
@@ -504,7 +504,7 @@ func handleCmd(cmd string, args []string) {
 			log.Errorf("Failed to get subgroups: %v", err)
 		} else {
 			for _, sub := range resp {
-				log.Infof("Subgroup: %+v", sub)
+				log.Infof("Subgroup: %+v", sub.GroupName)
 			}
 		}
 	case "communityparticipants":
@@ -561,7 +561,7 @@ func handleCmd(cmd string, args []string) {
 		if err != nil {
 			log.Errorf("Failed to resolve group invite link: %v", err)
 		} else {
-			log.Infof("Group info: %+v", resp)
+			log.Infof("Group info: %+v", resp.Name)
 		}
 	case "querybusinesslink":
 		if len(args) < 1 {
@@ -896,8 +896,13 @@ func handler(rawEvt interface{}) {
 		if evt.IsEdit {
 			metaParts = append(metaParts, "edit")
 		}
-
-		log.Infof("Received message %s from %s (%s): %+v", evt.Info.ID, evt.Info.SourceString(), strings.Join(metaParts, ", "), evt.Message)
+		event_source := strings.Split(evt.Info.SourceString(), " ")
+		if event_source[2] != "" {
+			group_info, _ := cli.GetGroupInfo(evt.Info.Chat)
+			group_name := group_info.GroupName
+			event_source[2] = group_name.Name + ".us"
+		}
+		log.Infof("Received message %s from %s (%s): %+v", evt.Info.ID, event_source, strings.Join(metaParts, ", "), evt.Message)
 
 		if evt.Message.GetPollUpdateMessage() != nil {
 			decrypted, err := cli.DecryptPollVote(evt)

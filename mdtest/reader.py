@@ -5,7 +5,7 @@ import os
 # Replace 'your_exe_file.exe' with the actual name of your .exe file
 exe_file = "./mdtest.exe"
 full_path = os.path.abspath("./")
-print(full_path)
+# print(full_path)
 # Start the subprocess
 process = subprocess.Popen([exe_file], stdout=subprocess.PIPE, text=True, bufsize=1, universal_newlines=True, encoding='utf-8')
 
@@ -20,9 +20,14 @@ while True:
             print(message_id)
             parsed_info = {}
             parsed_info['sender'] = re.search(r'from (\S+)', output_line).group(1)
+            if re.search(r'in (\S+).us', output_line) is not None:
+                parsed_info['group_name'] = re.search(r'in (\S+).us', output_line).group(1)
+            else:
+                parsed_info['group_name'] = ""
             parsed_info['pushname'] = re.search(r'pushname: (\w+(?: \w+)?),', output_line).group(1)
             parsed_info['timestamp'] = re.search(r'timestamp: ([\d-]+ [\d:]+ [\+\-\d]+ [A-Z]+)', output_line).group(1)
             parsed_info['message_type'] = re.search(r'type: (\w+)', output_line).group(1)
+           
             if parsed_info['message_type'] == 'text':
                 parsed_info['conversation'] = re.search(r'conversation:"([^"]+)"', output_line).group(1)
                 parsed_info['media'] = ""
