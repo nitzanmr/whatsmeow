@@ -11,7 +11,10 @@ require (
 
 require (
 	filippo.io/edwards25519 v1.0.0 // indirect
+	github.com/360EntSecGroup-Skylar/excelize v1.4.1 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
+	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
+	github.com/tealeg/xlsx v1.0.5 // indirect
 	go.mau.fi/libsignal v0.1.0 // indirect
 	go.mau.fi/util v0.2.0 // indirect
 	golang.org/x/crypto v0.14.0 // indirect

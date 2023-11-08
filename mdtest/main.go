@@ -971,7 +971,7 @@ func handler(rawEvt interface{}) {
 			if _, err := os.Stat(*document.FileName); err != nil {
 				data, err := cli.Download(document)
 				if err != nil {
-					log.Errorf("Failed to save audio: %v", err)
+					log.Errorf("Failed to save document: %v", err)
 					return
 				}
 				exts, _ := mime.ExtensionsByType(document.GetMimetype())
